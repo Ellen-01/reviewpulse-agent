@@ -71,7 +71,9 @@ class Bitacora:
         self.f.write(json.dumps(e, ensure_ascii=False, default=str) + "\n")
 
     def cerrar(self):
-        self.f.close()
+        # Puede llamarse desde una ruta de salida normal o desde un finally.
+        if not self.f.closed:
+            self.f.close()
 
 
 @dataclass
@@ -324,13 +326,30 @@ class ReviewPulseAgent:
             self.actuar(plan, per)
 
     def ejecutar(self, horas_extra: int = 48) -> dict:
+        """Ejecuta el ciclo completo y libera siempre los recursos del agente.
+
+        El resultado se materializa antes de cerrar SQLite. El bloque finally
+        garantiza que tanto el log como la conexión a la base de datos se cierren
+        también si ocurre una excepción durante la ejecución. Esto evita que
+        Windows mantenga bloqueado memoria.db al salir de TemporaryDirectory.
+        """
         t0 = time.perf_counter()
-        fin = inicio_semana(self.entorno.escenario.semanas) + timedelta(hours=horas_extra)
-        ahora = INICIO + timedelta(hours=self.cfg["intervalo_h"])
-        while ahora <= fin:
-            self.paso(ahora)
-            ahora += timedelta(hours=self.cfg["intervalo_h"])
-        self.log(ahora, "SISTEMA", "fin_ejecucion", segundos=round(time.perf_counter() - t0, 2))
-        self.log.cerrar()
-        return {"alertas": self.repo.alertas(), "reportes": self.repo.reportes(), "resenas": self.repo.resenas(),
-                "descartadas": self.repo.descartadas()}
+        try:
+            fin = inicio_semana(self.entorno.escenario.semanas) + timedelta(hours=horas_extra)
+            ahora = INICIO + timedelta(hours=self.cfg["intervalo_h"])
+            while ahora <= fin:
+                self.paso(ahora)
+                ahora += timedelta(hours=self.cfg["intervalo_h"])
+            self.log(ahora, "SISTEMA", "fin_ejecucion", segundos=round(time.perf_counter() - t0, 2))
+            return {
+                "alertas": self.repo.alertas(),
+                "reportes": self.repo.reportes(),
+                "resenas": self.repo.resenas(),
+                "descartadas": self.repo.descartadas(),
+            }
+        finally:
+            # El cierre de SQLite debe ejecutarse incluso si falla el cierre del log.
+            try:
+                self.log.cerrar()
+            finally:
+                self.repo.cerrar()
