@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#292435">
+  <title>ReviewPulse-Agent</title>
+  <link rel="stylesheet" href="/static/styles.css">
+  <script src="/static/app.js" defer></script>
+</head>
+<body>
+  <div class="shell">
+    <aside class="sidebar">
+      <a class="brand" href="/" aria-label="ReviewPulse inicio">
+        <span class="brand-mark" aria-hidden="true">RP</span>
+        <span><strong>ReviewPulse</strong><small>Hotel piloto</small></span>
+      </a>
+      <p class="nav-title">Panel</p>
+      <nav aria-label="Navegación principal">
+        <button class="nav-button active" data-view="summary">Resumen</button>
+        <button class="nav-button" data-view="reviews">Reseñas del hotel</button>
+        <button class="nav-button" data-view="weeks">Resumen por semana</button>
+        <button class="nav-button" data-view="analyze">Probar una reseña</button>
+        <p class="nav-title agent-label">Agente</p>
+        <button class="nav-button" data-view="technical">Demostración técnica</button>
+      </nav>
+      <div class="sidebar-foot">
+        <span id="health-dot" class="health-dot"></span>
+        <span id="health-text">Conectando con el agente…</span>
+      </div>
+    </aside>
+
+    <main class="content">
+      <section class="view active" id="view-summary" aria-labelledby="summary-title">
+        <header class="page-heading">
+          <p class="eyebrow">Hotel piloto · datos de demostración</p>
+          <h1 id="summary-title">Resumen</h1>
+          <p>Historial procesado por el agente original · escenario E02, semilla 11.</p>
+        </header>
+        <div id="summary-loading" class="notice">Cargando el historial del agente…</div>
+        <div id="summary-error" class="notice error hidden" role="alert"></div>
+        <div id="summary-content" class="hidden">
+          <div id="summary-kpis" class="kpi-grid"></div>
+          <section class="panel">
+            <div class="section-heading"><h2>Distribución de las reseñas</h2></div>
+            <div id="summary-breakdown" class="breakdown"></div>
+          </section>
+          <section class="panel">
+            <div class="section-heading"><h2>Alertas</h2></div>
+            <div id="summary-alerts"></div>
+          </section>
+          <section class="panel">
+            <div class="section-heading"><h2>Cómo va cada tema</h2></div>
+            <div id="summary-chart" class="chart-grid"></div>
+          </section>
+          <section class="panel">
+            <div class="section-heading"><h2>Reseñas recientes</h2></div>
+            <div id="summary-reviews"></div>
+          </section>
+        </div>
+      </section>
+
+      <section class="view" id="view-reviews" aria-labelledby="reviews-title">
+        <header class="page-heading">
+          <p class="eyebrow">Historial clasificado</p>
+          <h1 id="reviews-title">Reseñas del hotel</h1>
+        </header>
+        <div id="reviews-content" class="hidden">
+          <div class="filters panel">
+            <label>Sentimiento
+              <select id="filter-sentiment">
+                <option value="">Todos</option><option value="positiva">Positiva</option>
+                <option value="negativa">Negativa</option><option value="neutra">Neutra</option>
+              </select>
+            </label>
+            <label>Tema
+              <select id="filter-theme">
+                <option value="">Todos</option><option value="limpieza">Limpieza</option>
+                <option value="servicio">Servicio</option><option value="ubicacion">Ubicación</option>
+                <option value="precio">Precio</option>
+              </select>
+            </label>
+            <label>Plataforma
+              <select id="filter-platform">
+                <option value="">Todas</option><option value="TripAdvisor">TripAdvisor</option>
+                <option value="Google">Google</option>
+              </select>
+            </label>
+            <button id="download-reviews" class="button secondary">Descargar CSV</button>
+          </div>
+          <p id="review-count" class="muted"></p>
+          <div id="reviews-table"></div>
+          <details class="panel">
+            <summary id="discarded-summary">Reseñas que el agente no pudo analizar</summary>
+            <div id="discarded-list" class="discarded-list"></div>
+          </details>
+        </div>
+        <div id="reviews-loading" class="notice">Cargando las reseñas…</div>
+      </section>
+
+      <section class="view" id="view-weeks" aria-labelledby="weeks-title">
+        <header class="page-heading">
+          <p class="eyebrow">Informe semanal</p>
+          <h1 id="weeks-title">Resumen por semana</h1>
+        </header>
+        <div class="panel">
+          <label for="week-select">Semana</label>
+          <select id="week-select"></select>
+          <div id="week-report" class="report"></div>
+          <div id="week-alerts"></div>
+        </div>
+      </section>
+
+      <section class="view" id="view-analyze" aria-labelledby="analyze-title">
+        <header class="page-heading">
+          <p class="eyebrow">Clasificador original</p>
+          <h1 id="analyze-title">Probar una reseña</h1>
+          <p>La validación y las predicciones usan los módulos existentes del proyecto.</p>
+        </header>
+        <div class="two-columns">
+          <form id="review-form" class="panel form-panel">
+            <label for="review-text">Reseña</label>
+            <textarea id="review-text" rows="9" maxlength="5000"
+              placeholder="Escribe aquí una reseña en español…" required></textarea>
+            <p class="muted">Se necesitan al menos tres palabras con letras. Máximo 5.000 caracteres.</p>
+            <button id="analyze-button" class="button primary" type="submit">Analizar reseña</button>
+            <div id="analysis-error" class="notice error hidden" role="alert"></div>
+            <p class="muted">El modelo puede equivocarse con palabras que no conoce; por eso muestra sus probabilidades.</p>
+          </form>
+          <section class="panel result-panel" aria-live="polite">
+            <h2>Resultado</h2>
+            <div id="analysis-result" class="muted">El resultado del análisis aparecerá aquí.</div>
+          </section>
+        </div>
+      </section>
+
+      <section class="view" id="view-technical" aria-labelledby="technical-title">
+        <header class="page-heading">
+          <p class="eyebrow">Agente</p>
+          <h1 id="technical-title">Demostración técnica</h1>
+          <p>Ejecuta el simulador, consulta el ciclo percepción → decisión → acción y revisa las evaluaciones guardadas.</p>
+        </header>
+        <div class="panel">
+          <h2>Ejecutar un escenario desde cero</h2>
+          <form id="scenario-form" class="scenario-form">
+            <label>Escenario<select id="scenario-select"></select></label>
+            <label>Semilla<input id="scenario-seed" type="number" min="1" max="9999" value="11"></label>
+            <details class="settings">
+              <summary>Ajustes de las alertas</summary>
+              <div class="settings-grid">
+                <label>Significancia (α)<input id="setting-alfa" type="number" min="0.001" max="0.2" step="0.001"></label>
+                <label>Aumento mínimo<input id="setting-delta" type="number" min="0" max="0.5" step="0.01"></label>
+                <label>Distancia (z)<input id="setting-z" type="number" min="0" max="5" step="0.25"></label>
+                <label>Mínimo de negativas<input id="setting-negative" type="number" min="1" max="10" step="1"></label>
+                <label>Seguridad mínima<input id="setting-confidence" type="number" min="0.3" max="0.9" step="0.05"></label>
+              </div>
+            </details>
+            <button id="run-scenario" class="button primary" type="submit">Ejecutar desde cero</button>
+          </form>
+          <p id="scenario-description" class="muted"></p>
+          <div id="scenario-error" class="notice error hidden" role="alert"></div>
+          <div id="scenario-loading" class="notice hidden" role="status">El agente está procesando el escenario…</div>
+          <div id="scenario-result" class="scenario-result"></div>
+        </div>
+        <div class="panel">
+          <h2>Resultados de las pruebas guardadas</h2>
+          <div id="evaluation-result" class="report">Cargando…</div>
+        </div>
+        <div class="panel">
+          <h2>Casos sugeridos</h2>
+          <ol class="suggestions">
+            <li><strong>E02 Incidente de limpieza:</strong> detectar el problema de aseo en la semana 9.</li>
+            <li><strong>E04 Temporada alta:</strong> más reseñas con el mismo tono habitual.</li>
+            <li><strong>E10 TripAdvisor caído:</strong> generar el reporte con datos incompletos.</li>
+            <li><strong>E11 Todas las plataformas caídas:</strong> observar los reintentos y alertas tardías.</li>
+            <li>En “Probar una reseña”, intenta un texto de una o dos palabras: el agente lo rechaza.</li>
+          </ol>
+        </div>
+      </section>
+    </main>
+  </div>
+</body>
+</html>
