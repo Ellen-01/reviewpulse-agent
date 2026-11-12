@@ -12,9 +12,13 @@ Uso:
 import csv
 import itertools
 import json
+import sys
 from pathlib import Path
 
 RAIZ = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(RAIZ))
+from pruebas.salidas_seguras import crear_destino_aislado
+
 CAL = RAIZ / "salidas" / "calibracion"
 REJILLA = {
     "alfa": [0.005, 0.01, 0.02, 0.04, 0.08],
@@ -48,13 +52,16 @@ def main():
         res.append({**p, **evaluar(filas, p)})
     validas = [r for r in res if r["tasa_fp"] < 0.08]
     mejor = max(validas, key=lambda r: (round(r["deteccion"], 3), -r["tasa_fp"], r["z_minimo"], r["alfa"] * -1))
-    with (CAL / "calibracion.csv").open("w", newline="", encoding="utf-8") as f:
+    salida = crear_destino_aislado(CAL, "calibracion")
+    with (salida / "calibracion.csv").open("x", newline="", encoding="utf-8") as f:
         w = csv.DictWriter(f, fieldnames=list(res[0]))
         w.writeheader()
         w.writerows(res)
-    (CAL / "elegido.json").write_text(json.dumps(mejor, indent=2), encoding="utf-8")
+    with (salida / "elegido.json").open("x", encoding="utf-8") as f:
+        json.dump(mejor, f, indent=2)
     print(f"{len(res)} combinaciones evaluadas; {len(validas)} con FP < 8 %")
     print("Elegido:", mejor)
+    print("Resultados guardados en:", salida)
     for r in sorted(validas, key=lambda r: -r["deteccion"])[:8]:
         print(r)
 

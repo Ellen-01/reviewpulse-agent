@@ -1,7 +1,8 @@
 sequenceDiagram
     autonumber
     actor G as Gerente
-    participant UI as Interfaz (Streamlit / config.json)
+    participant UI as Frontend independiente (HTML/CSS/JavaScript)
+    participant API as FastAPI (HTTP/JSON)
     participant P as Agente: Percepción<br/>percibir()
     participant D as Agente: Decisión<br/>decidir() + planificar()
     participant A as Agente: Acción<br/>actuar()
@@ -10,8 +11,9 @@ sequenceDiagram
     participant R as Repositorio histórico (SQLite)
     participant N as Notificador (correo / bandeja)
 
-    G->>UI: fijarUmbrales(α, delta, z, mínimo)
-    UI-->>P: config.json
+    G->>UI: seleccionar escenario y ajustar umbrales
+    UI->>API: POST /api/scenarios/run (scenario, seed, settings)
+    API->>P: iniciar ejecución del agente
     loop cada 6 h de tiempo simulado
         P->>E: consultar(plataforma, cursor, ahora)
         E-->>P: reseñas nuevas + metadatos
@@ -36,7 +38,7 @@ sequenceDiagram
                 A->>A: registrar "sin alerta" con motivos
             end
             A->>R: guardarReporte() + cerrarSemana()
-            A-->>UI: resumen semanal por tema
-            UI-->>G: panel y reporte
         end
     end
+    API-->>UI: resultados, eventos y reportes JSON
+    UI-->>G: panel y reporte

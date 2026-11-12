@@ -3,7 +3,8 @@
 Uso:  python pruebas/ejecutar_pruebas.py            (completo: 11 casos M1 + 12 escenarios, 5 repeticiones)
       python pruebas/ejecutar_pruebas.py --rapido   (1 repetición, para la demo en vivo)
 
-Salidas en salidas/pruebas/ (con --rapido, en salidas/pruebas_rapido/):
+Cada ejecución crea un directorio exclusivo en salidas/pruebas/ (o en
+salidas/pruebas_rapido/ con --rapido); no reemplaza resultados anteriores:
   m1_clasificacion.csv        una fila por caso y repetición
   escenarios.csv              una fila por escenario y repetición (M2, M3, M4)
   corridas/<E>_s<semilla>/    log_ejecucion.jsonl, memoria.db, reportes/ y bandeja_salida.jsonl de cada corrida
@@ -16,7 +17,6 @@ import argparse
 import csv
 import json
 import random
-import shutil
 import statistics as st
 import sys
 import time
@@ -35,8 +35,8 @@ from reviewpulse.escenarios import ESCENARIOS  # noqa: E402
 from reviewpulse.evaluacion import evaluar_corrida  # noqa: E402
 from reviewpulse.modelo import ClasificadorSentimiento, entrenar_modelo_base  # noqa: E402
 from reviewpulse.preprocesamiento import validar  # noqa: E402
+from pruebas.salidas_seguras import crear_destino_aislado  # noqa: E402
 
-SALIDA = RAIZ / "salidas" / "pruebas"
 UMBRALES = json.loads((RAIZ / "pruebas" / "umbrales.json").read_text(encoding="utf-8"))
 
 
@@ -120,12 +120,12 @@ def prueba_m1(semillas):
 
 
 # ---------------------------------------------------------------- M2, M3, M4: escenarios del agente
-def prueba_escenarios(semillas, modelo):
+def prueba_escenarios(semillas, modelo, salida):
     filas = []
     for eid, esc in ESCENARIOS.items():
         for s in semillas:
-            carpeta = SALIDA / "corridas" / f"{eid}_s{s}"
-            shutil.rmtree(carpeta, ignore_errors=True)
+            carpeta = salida / "corridas" / f"{eid}_s{s}"
+            carpeta.mkdir(parents=True, exist_ok=False)
             entorno = EntornoHotel(esc, s)
             agente = ReviewPulseAgent(entorno, carpeta, modelo=modelo)
             t0 = time.perf_counter()
@@ -256,7 +256,7 @@ def tabla_markdown(r):
 
 
 def guardar_csv(ruta, filas):
-    with ruta.open("w", newline="", encoding="utf-8") as f:
+    with ruta.open("x", newline="", encoding="utf-8") as f:
         w = csv.DictWriter(f, fieldnames=list(filas[0].keys()))
         w.writeheader()
         w.writerows(filas)
@@ -266,29 +266,31 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--rapido", action="store_true", help="una sola repetición")
     args = ap.parse_args()
-    global SALIDA
     semillas = UMBRALES["semillas"][:1] if args.rapido else UMBRALES["semillas"]
-    if args.rapido:  # no pisar los resultados oficiales de la corrida completa
-        SALIDA = RAIZ / "salidas" / "pruebas_rapido"
-    SALIDA.mkdir(parents=True, exist_ok=True)
+    base_salida = RAIZ / "salidas" / ("pruebas_rapido" if args.rapido else "pruebas")
+    prefijo = "rapido" if args.rapido else "completo"
+    salida = crear_destino_aislado(base_salida, prefijo)
     print(f"Umbrales fijados el {UMBRALES['fijados_el']}. Repeticiones: {len(semillas)}")
     print("Prueba M1 (clasificación)…")
     m1 = prueba_m1(semillas)
-    guardar_csv(SALIDA / "m1_clasificacion.csv", m1)
+    guardar_csv(salida / "m1_clasificacion.csv", m1)
     print("Pruebas M2–M4 (escenarios del agente)…")
     modelo = ClasificadorSentimiento.cargar()
-    esc = prueba_escenarios(semillas, modelo)
-    guardar_csv(SALIDA / "escenarios.csv", esc)
+    esc = prueba_escenarios(semillas, modelo, salida)
+    guardar_csv(salida / "escenarios.csv", esc)
     r = resumir(m1, esc)
-    (SALIDA / "resumen.json").write_text(json.dumps(r, ensure_ascii=False, indent=2), encoding="utf-8")
+    with (salida / "resumen.json").open("x", encoding="utf-8") as f:
+        f.write(json.dumps(r, ensure_ascii=False, indent=2))
     tabla = tabla_markdown(r)
     if args.rapido:
         aviso = ("> **MODO RÁPIDO (1 repetición, semilla 11).** Resultado de demostración: no es el resultado oficial. "
                  "El oficial (5 repeticiones) está en salidas/pruebas/.\n\n")
         tabla = aviso + tabla.replace("11 casos × 5 reentrenamientos", "11 casos × 1 reentrenamiento").replace("12 escenarios × 5 semillas", "12 escenarios × 1 semilla").replace("en 5 reentrenamientos", "en 1 reentrenamiento").replace("(5 semillas cada uno)", "(1 semilla cada uno)")
-    (SALIDA / "tabla_resultados.md").write_text(tabla, encoding="utf-8")
+    with (salida / "tabla_resultados.md").open("x", encoding="utf-8") as f:
+        f.write(tabla)
     print("\n" + tabla)
     print("\nVeredicto:", r["veredicto"])
+    print("Resultados guardados en:", salida)
 
 
 if __name__ == "__main__":

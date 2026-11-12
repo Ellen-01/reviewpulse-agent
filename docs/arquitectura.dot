@@ -3,8 +3,14 @@ digraph G {
   node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=11, fillcolor="#FFFFFF", color="#3B5B92"];
   edge [fontname="Helvetica", fontsize=9, color="#555555"];
 
+  subgraph cluster_frontend { label="Interfaz web"; style="rounded"; color="#6B8E6B"; fontname="Helvetica";
+    UI [label="HTML / CSS / JavaScript\nweb/static/"];
+  }
+  subgraph cluster_api { label="Backend"; style="rounded"; color="#6B8E6B"; fontname="Helvetica";
+    API [label="FastAPI\napi/main.py\nHTTP / JSON", fillcolor="#E3ECF8"];
+  }
   subgraph cluster_env { label="Entorno (simulador: entorno.py)"; style="rounded,dashed"; color="#888888"; fontname="Helvetica";
-    TA [label="TripAdvisor\n(conector)"]; GO [label="Google\n(conector)"]; HOTEL [label="Estado oculto del hotel\n(incidentes, volumen)", fillcolor="#F2F2F2"]; }
+    TA [label="TripAdvisor\n(fuente simulada)"]; GO [label="Google\n(fuente simulada)"]; HOTEL [label="Estado oculto del hotel\n(incidentes, volumen)", fillcolor="#F2F2F2"]; }
   HOTEL -> TA [style=dashed]; HOTEL -> GO [style=dashed];
 
   subgraph cluster_agent { label="ReviewPulseAgent (agente.py)"; style="rounded"; color="#3B5B92"; fontname="Helvetica-Bold";
@@ -19,11 +25,13 @@ digraph G {
   DB [label="SQLite\nmemoria.db", shape=cylinder, fillcolor="#FFF4D6"];
   NOT [label="Notificador\nactuadores.py [IBM 6]", fillcolor="#FDE7E7"];
   REP [label="Generador de reporte\nactuadores.py [IBM 6]", fillcolor="#FDE7E7"];
-  CFG [label="config.json / Streamlit\n(umbrales del gerente)", fillcolor="#F2F2F2"];
+  CFG [label="config/config.json\n(umbrales por defecto)", fillcolor="#F2F2F2"];
   GER [label="Gerente", shape=oval, fillcolor="#FFFFFF"];
   LOG [label="Bitácora\nlog_ejecucion.jsonl", shape=note, fillcolor="#FFFFFF"];
 
-  TA -> PER [label="reseñas"]; GO -> PER [label="reseñas"]; CFG -> PER [label="umbrales"];
+  GER -> UI; UI -> API [label="HTTP / JSON"]; API -> UI [label="resultados"];
+  API -> PER [label="ejecutar escenario"]; CFG -> API [label="config base"];
+  TA -> PER [label="reseñas"]; GO -> PER [label="reseñas"];
   EST -> PER [label="semanas pendientes"];
   PER -> PLA [label="Percepcion"]; PLA -> ACT [label="plan"]; ACT -> PRE; ACT -> MOD [label="predecir()"]; MOD -> ACT [label="prob."];
   ACT -> DEC; DEC -> EST [dir=both]; EST -> DB [dir=both];

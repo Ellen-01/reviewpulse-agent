@@ -15,7 +15,7 @@ module.exports = {
   dim: { tipico: [2768, 1550], excepcion: [2768, 1456] },
   enlaces: {
     repositorio: "[pegar enlace de GitHub]",
-    despliegue: "[pegar enlace de Streamlit Community Cloud]",
+    despliegue: "[pegar enlace del Space en Hugging Face]",
     video: "[pegar enlace de YouTube no listado]",
   },
   analisis: [

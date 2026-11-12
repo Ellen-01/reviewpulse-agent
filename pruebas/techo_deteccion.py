@@ -18,6 +18,7 @@ from reviewpulse.agente import CONFIG_DEFECTO, cola_binomial  # noqa: E402
 from reviewpulse.corpus import TEMAS  # noqa: E402
 from reviewpulse.entorno import EntornoHotel  # noqa: E402
 from reviewpulse.escenarios import ESCENARIOS  # noqa: E402
+from pruebas.salidas_seguras import crear_destino_aislado  # noqa: E402
 
 SEMILLAS = json.loads((RAIZ / "pruebas" / "umbrales.json").read_text(encoding="utf-8"))["semillas"]
 
@@ -74,8 +75,11 @@ def main():
                           "deteccion": round(det / inc, 3), "alertas": al, "fp": fp,
                           "tasa_fp": round(fp / al, 3) if al else 0.0})
             print(filas[-1])
-    (RAIZ / "salidas" / "pruebas" / "techo_deteccion.json").write_text(json.dumps(filas, indent=2, ensure_ascii=False),
-                                                                     encoding="utf-8")
+    salida = crear_destino_aislado(RAIZ / "salidas" / "pruebas", "techo_deteccion")
+    ruta = salida / "techo_deteccion.json"
+    with ruta.open("x", encoding="utf-8") as f:
+        json.dump(filas, f, indent=2, ensure_ascii=False)
+    print("Resultados guardados en:", ruta)
 
 
 if __name__ == "__main__":

@@ -2,19 +2,22 @@ name: Comprobación del agente
 
 on:
   push:
-    branches: [main]
+    branches: [main, migration/fastapi-hf-space]
   pull_request:
 
 jobs:
   verificar:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.12", "3.13"]
     steps:
       - name: Obtener código
         uses: actions/checkout@v4
-      - name: Preparar Python 3.13
+      - name: Preparar Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
         with:
-          python-version: '3.13'
+          python-version: ${{ matrix.python-version }}
           cache: pip
       - name: Instalar dependencias
         run: |
@@ -24,7 +27,7 @@ jobs:
         run: |
           python -c "import sklearn; assert sklearn.__version__ == '1.9.1', sklearn.__version__"
       - name: Sintaxis de Python
-        run: python -m compileall -q reviewpulse api app pruebas tests ejecutar_agente.py
+        run: python -m compileall -q reviewpulse api pruebas tests ejecutar_agente.py
       - name: Pruebas de cierre SQLite
         run: python -m unittest discover -s tests -v
       - name: Caso normal E02

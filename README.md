@@ -62,6 +62,7 @@ python ejecutar_agente.py --escenario E02 --semilla 11
 ```
 
 Escenarios disponibles: `E01` a `E12`; E10 y E11 representan fallas esperadas de plataforma.
+Cada ejecución crea un directorio exclusivo bajo `salidas/demo/` y conserva los registros anteriores; la ruta del log se imprime al finalizar.
 
 Para ejecutar las pruebas de desempeño:
 
@@ -71,6 +72,10 @@ python pruebas/ejecutar_pruebas.py --rapido
 ```
 
 La ejecución completa realiza cinco repeticiones por escenario y tarda unos 10 minutos. La opción rápida ejecuta una repetición. Las salidas rápidas y los registros detallados se escriben en directorios separados; revisa la ruta de salida antes de regenerar resultados oficiales.
+
+Cada ejecución crea un directorio nuevo y exclusivo bajo `salidas/pruebas/` o `salidas/pruebas_rapido/`; no sobrescribe los resultados guardados en la raíz de esas carpetas. La ruta exacta se imprime al terminar.
+
+`pruebas/calibrar_umbrales.py` guarda cada calibración bajo `salidas/calibracion/` en un directorio exclusivo. `pruebas/techo_deteccion.py` hace lo mismo bajo `salidas/pruebas/`; ambos imprimen la ruta nueva y conservan sus resultados anteriores.
 
 Los resultados resumidos conservados en el repositorio están en `salidas/pruebas/`: `tabla_resultados.md`, `resumen.json`, `m1_clasificacion.csv` y `escenarios.csv`. La versión evaluada reporta M1 81%, M2 52%, M3 100% y M4 3,1%; el análisis académico correspondiente está en los documentos históricos.
 
@@ -91,6 +96,8 @@ docker run --rm -p 7860:7860 reviewpulse-agent
 
 Abre `http://localhost:7860`. La imagen usa la variable `PORT` (por defecto `7860`) y ejecuta `api.run`.
 
+Se soportan Python 3.12 y 3.13: Docker usa Python 3.12 y GitHub Actions ejecuta las pruebas en ambas versiones. `scikit-learn` permanece fijado en 1.9.1 para ser compatible con el modelo serializado.
+
 ## Hugging Face Spaces
 
 El encabezado de este README configura el Space con `sdk: docker` y `app_port: 7860`.
@@ -101,6 +108,8 @@ El encabezado de este README configura el Space con `sdk: docker` y `app_port: 7
 4. Verifica `/health` y `/docs` en la URL del Space.
 
 No se necesita GPU ni una clave de API. El sistema de archivos local de un Space puede ser efímero: las corridas de escenario de la API usan directorios temporales, por lo que su SQLite, logs y reportes desaparecen al terminar la solicitud, igual que en la demostración técnica original. Para persistencia entre reinicios hace falta configurar almacenamiento persistente.
+
+Como el Space es público, `POST /api/scenarios/run` admite hasta cinco ejecuciones por minuto y una ejecución simultánea por proceso. Las solicitudes que excedan esos límites reciben HTTP 429 y `Retry-After`. El límite es compartido por los visitantes de ese proceso y se restablece al reiniciarlo; no es un sistema de autenticación.
 
 ## Arquitectura y archivos conservados
 

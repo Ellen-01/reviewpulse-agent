@@ -4,13 +4,13 @@ Uso: python ejecutar_agente.py --escenario E02 --semilla 11
 """
 import argparse
 import json
-import shutil
 from pathlib import Path
 
 from reviewpulse.agente import ReviewPulseAgent
 from reviewpulse.entorno import EntornoHotel
 from reviewpulse.escenarios import ESCENARIOS
 from reviewpulse.evaluacion import evaluar_corrida
+from pruebas.salidas_seguras import crear_destino_aislado
 
 ap = argparse.ArgumentParser()
 ap.add_argument("--escenario", default="E02", choices=list(ESCENARIOS))
@@ -18,8 +18,7 @@ ap.add_argument("--semilla", type=int, default=11)
 ap.add_argument("--config", default="config/config.json")
 a = ap.parse_args()
 
-carpeta = Path("salidas") / "demo" / f"{a.escenario}_s{a.semilla}"
-shutil.rmtree(carpeta, ignore_errors=True)
+carpeta = crear_destino_aislado(Path("salidas") / "demo", f"{a.escenario}_s{a.semilla}")
 entorno = EntornoHotel(ESCENARIOS[a.escenario], a.semilla)
 cfg = json.loads(Path(a.config).read_text(encoding="utf-8"))
 print(f"Escenario: {ESCENARIOS[a.escenario].nombre} — {ESCENARIOS[a.escenario].descripcion}")

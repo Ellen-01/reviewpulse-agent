@@ -1,8 +1,11 @@
 from __future__ import annotations
 
 import json
+import math
 import threading
 import tempfile
+import time
+from collections import deque
 from contextlib import asynccontextmanager
 from pathlib import Path
 
@@ -47,6 +50,39 @@ class ScenarioRequest(StrictModel):
     settings: AlertSettings = Field(default_factory=AlertSettings)
 
 
+class ScenarioExecutionLimiter:
+    def __init__(
+        self,
+        max_requests: int = 5,
+        window_seconds: float = 60.0,
+        max_concurrent: int = 1,
+    ):
+        if max_requests < 1 or window_seconds <= 0 or max_concurrent < 1:
+            raise ValueError("Los límites de ejecución deben ser positivos.")
+        self.max_requests = max_requests
+        self.window_seconds = window_seconds
+        self._requests = deque()
+        self._lock = threading.Lock()
+        self._active = threading.BoundedSemaphore(max_concurrent)
+
+    def try_acquire(self, now: float | None = None) -> tuple[str | None, int]:
+        now = time.monotonic() if now is None else now
+        cutoff = now - self.window_seconds
+        with self._lock:
+            while self._requests and self._requests[0] <= cutoff:
+                self._requests.popleft()
+            if len(self._requests) >= self.max_requests:
+                retry_after = max(1, math.ceil(self.window_seconds - (now - self._requests[0])))
+                return "rate_limit", retry_after
+            if not self._active.acquire(blocking=False):
+                return "concurrency_limit", 1
+            self._requests.append(now)
+        return None, 0
+
+    def release(self) -> None:
+        self._active.release()
+
+
 def _load_original_model() -> ClasificadorSentimiento:
     if not RUTA_MODELO.is_file():
         raise FileNotFoundError(f"No se encontró el modelo entrenado requerido: {RUTA_MODELO}")
@@ -67,6 +103,7 @@ async def lifespan(application: FastAPI):
     application.state.config = json.loads(CONFIG_PATH.read_text(encoding="utf-8"))
     application.state.dashboard = None
     application.state.dashboard_lock = threading.Lock()
+    application.state.scenario_limiter = ScenarioExecutionLimiter()
     yield
 
 
@@ -159,9 +196,30 @@ def analyze_review(body: ReviewRequest, request: Request):
 def run_scenario(body: ScenarioRequest, request: Request):
     if body.scenario not in ESCENARIOS:
         raise HTTPException(status_code=404, detail="Escenario no encontrado.")
-    settings = body.settings.model_dump(exclude_none=True)
-    config = {**request.app.state.config, **settings}
-    return _run_scenario(request.app.state.model, body.scenario, body.seed, config)
+    limiter: ScenarioExecutionLimiter = request.app.state.scenario_limiter
+    limit_reason, retry_after = limiter.try_acquire()
+    if limit_reason is not None:
+        if limit_reason == "rate_limit":
+            detail = {
+                "code": "scenario_rate_limit",
+                "message": "Se alcanzó el límite de ejecuciones de escenarios por minuto.",
+            }
+        else:
+            detail = {
+                "code": "scenario_concurrency_limit",
+                "message": "Ya hay una ejecución de escenario en curso.",
+            }
+        raise HTTPException(
+            status_code=429,
+            detail=detail,
+            headers={"Retry-After": str(retry_after)},
+        )
+    try:
+        settings = body.settings.model_dump(exclude_none=True)
+        config = {**request.app.state.config, **settings}
+        return _run_scenario(request.app.state.model, body.scenario, body.seed, config)
+    finally:
+        limiter.release()
 
 
 @app.get("/api/evaluations", tags=["evaluación"])

@@ -5,7 +5,7 @@ from unittest.mock import patch
 
 from fastapi.testclient import TestClient
 
-from api.main import app
+from api.main import ScenarioExecutionLimiter, app
 from reviewpulse.modelo import ClasificadorSentimiento
 
 
@@ -74,6 +74,39 @@ class ReviewPulseApiTests(unittest.TestCase):
         response = self.client.post("/api/scenarios/run", json={"scenario": "E02", "seed": 0})
         self.assertEqual(response.status_code, 422)
 
+    def test_scenario_run_returns_429_after_rate_limit(self):
+        state = self.client.app.state
+        original_limiter = state.scenario_limiter
+        state.scenario_limiter = ScenarioExecutionLimiter(max_requests=1)
+        self.addCleanup(setattr, state, "scenario_limiter", original_limiter)
+
+        with patch("api.main._run_scenario", return_value={"scenario": "E02"}) as run:
+            first = self.client.post("/api/scenarios/run", json={"scenario": "E02", "seed": 11})
+            limited = self.client.post("/api/scenarios/run", json={"scenario": "E02", "seed": 11})
+
+        self.assertEqual(first.status_code, 200)
+        self.assertEqual(limited.status_code, 429)
+        self.assertEqual(limited.json()["detail"]["code"], "scenario_rate_limit")
+        self.assertGreaterEqual(int(limited.headers["Retry-After"]), 1)
+        self.assertLessEqual(int(limited.headers["Retry-After"]), 60)
+        run.assert_called_once()
+
+    def test_scenario_run_returns_429_while_an_execution_is_active(self):
+        state = self.client.app.state
+        original_limiter = state.scenario_limiter
+        limiter = ScenarioExecutionLimiter()
+        state.scenario_limiter = limiter
+        self.addCleanup(setattr, state, "scenario_limiter", original_limiter)
+        self.assertEqual(limiter.try_acquire(), (None, 0))
+        self.addCleanup(limiter.release)
+
+        with patch("api.main._run_scenario") as run:
+            response = self.client.post("/api/scenarios/run", json={"scenario": "E02", "seed": 11})
+
+        self.assertEqual(response.status_code, 429)
+        self.assertEqual(response.json()["detail"]["code"], "scenario_concurrency_limit")
+        run.assert_not_called()
+
     def test_evaluation_and_scenario_resources_are_available(self):
         self.assertEqual(self.client.get("/api/evaluations").status_code, 200)
         self.assertEqual(self.client.get("/api/scenarios").status_code, 200)
@@ -103,6 +136,20 @@ class StrictModelLoadingTests(unittest.TestCase):
 
     def test_original_loader_remains_default_for_existing_callers(self):
         self.assertIsInstance(ClasificadorSentimiento.cargar(), ClasificadorSentimiento)
+
+
+class ScenarioExecutionLimiterTests(unittest.TestCase):
+    def test_limiter_rejects_concurrency_and_expires_old_requests(self):
+        limiter = ScenarioExecutionLimiter(max_requests=2, window_seconds=60, max_concurrent=1)
+
+        self.assertEqual(limiter.try_acquire(now=0), (None, 0))
+        self.assertEqual(limiter.try_acquire(now=1), ("concurrency_limit", 1))
+        limiter.release()
+
+        self.assertEqual(limiter.try_acquire(now=2), (None, 0))
+        limiter.release()
+        self.assertEqual(limiter.try_acquire(now=60), (None, 0))
+        limiter.release()
 
 
 if __name__ == "__main__":
