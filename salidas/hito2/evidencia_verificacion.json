@@ -1,0 +1,97 @@
+{
+  "fecha": "2026-11-13",
+  "rama": "migration/fastapi-hf-space",
+  "commit_base": "f21ddc3",
+  "pruebas_unitarias": {
+    "comando": "python3 -m unittest discover -s tests -v",
+    "resultado": "14 pruebas pasaron",
+    "duracion_segundos": 1.486,
+    "advertencia": "Starlette avisó que el uso de httpx con TestClient está deprecado; no afectó el resultado."
+  },
+  "compilacion": {
+    "comando": "PYTHONPYCACHEPREFIX=/tmp/reviewpulse-hito2-pycache python3 -m compileall -q reviewpulse api pruebas tests ejecutar_agente.py",
+    "resultado": "correcto; caché fuera del repositorio"
+  },
+  "evaluacion_rapida": {
+    "comando": "python3 pruebas/ejecutar_pruebas.py --rapido",
+    "salida_aislada": "salidas/pruebas_rapido/rapido_gy5pfuq3/",
+    "repeticiones": 1,
+    "semilla": 11,
+    "es_resultado_oficial": false,
+    "m1_c03": {
+      "polaridad": 0.85,
+      "tema": 0.9,
+      "cumple_en_esta_repeticion": true
+    },
+    "m2": {
+      "incidentes_detectados_en_24h": 5,
+      "incidentes": 10,
+      "tasa": 0.5,
+      "cumple": false
+    },
+    "m3": {
+      "reportes_a_tiempo": 168,
+      "semanas": 168,
+      "tasa": 1.0,
+      "cumple": true
+    },
+    "m4": {
+      "falsos_positivos": 0,
+      "alertas": 6,
+      "tasa": 0.0,
+      "cumple": true
+    },
+    "copias_resumidas": "salidas/hito2/evaluacion_rapida/"
+  },
+  "fastapi_local": {
+    "comando": "python3 -m uvicorn api.main:app --host 127.0.0.1 --port 18765 --no-access-log",
+    "modelo": "tfidf+lexico-logreg-2.0",
+    "rutas": {
+      "GET /health": 200,
+      "GET /": 200,
+      "GET /static/app.js": 200,
+      "GET /api/scenarios": 200,
+      "GET /api/dashboard": 200,
+      "GET /api/evaluations": 200,
+      "POST /api/reviews/analyze": 200,
+      "POST /api/scenarios/run (E02, semilla 11)": 200
+    },
+    "panel": {
+      "resenas": 486,
+      "descartadas": 21,
+      "reportes": 14,
+      "alertas": 1
+    },
+    "clasificacion_humo": {
+      "polaridad": "positiva",
+      "tema": "servicio",
+      "confianza": 0.9453370136760185
+    },
+    "escenario_e02": {
+      "resenas_clasificadas": 486,
+      "resenas_descartadas": 21,
+      "alertas": 1,
+      "reportes_a_tiempo": 14,
+      "semanas_cerradas": 14,
+      "eventos": 1765,
+      "reportes_json": 14
+    },
+    "navegador": {
+      "titulo": "ReviewPulse-Agent",
+      "estado": "Agente disponible",
+      "clasificacion_y_escenario_probados_desde_la_interfaz": true,
+      "evaluaciones_visibles": true
+    }
+  },
+  "alcance_no_verificado": [
+    "Dockerfile y metadata de Hugging Face se revisaron estáticamente; no se construyó una imagen Docker.",
+    "No se comprobó un Space público de Hugging Face ni se registró una URL."
+  ],
+  "pdf": {
+    "archivo": "ReviewPulse-Agent_hito2.pdf",
+    "pdfkit_abre": true,
+    "paginas": 10,
+    "pagina_2_es_avance_completo": true,
+    "diagramas_y_bitacora_incluidos": true
+  }
+}

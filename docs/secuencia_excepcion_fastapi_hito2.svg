@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="820" viewBox="0 0 1280 820" role="img" aria-labelledby="title desc">
+  <title id="title">Flujo de excepción de ReviewPulse-Agent en FastAPI</title>
+  <desc id="desc">Cuando TripAdvisor no responde, el agente continúa con Google, registra la falla y entrega un reporte incompleto antes del plazo.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+      <path d="M0,0 L10,4 L0,8 Z" fill="#43536b"/>
+    </marker>
+    <style>
+      text { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif; fill: #263449; }
+      .title { font-size: 29px; font-weight: 700; }
+      .sub { font-size: 15px; fill: #5b687b; }
+      .head { font-size: 15px; font-weight: 700; }
+      .msg { font-size: 14px; }
+      .life { stroke: #8c99aa; stroke-width: 2; stroke-dasharray: 7 7; }
+      .edge { stroke: #43536b; stroke-width: 2; fill: none; marker-end: url(#arrow); }
+      .back { stroke-dasharray: 7 6; }
+      .warn { fill: #fff3e8; stroke: #c17a3a; stroke-width: 2; }
+    </style>
+  </defs>
+  <rect width="1280" height="820" fill="#f7f9fc"/>
+  <text x="54" y="58" class="title">Flujo de excepción · plataforma no disponible</text>
+  <text x="54" y="88" class="sub">Caso simulado E10: Google sigue disponible; el agente registra la caída de TripAdvisor y marca el reporte como incompleto.</text>
+  <g fill="#eaf3ff" stroke="#4b72a8" stroke-width="2">
+    <rect x="42" y="128" width="160" height="68" rx="12"/><rect x="245" y="128" width="185" height="68" rx="12"/>
+    <rect x="475" y="128" width="185" height="68" rx="12"/><rect x="705" y="128" width="175" height="68" rx="12"/>
+    <rect x="925" y="128" width="170" height="68" rx="12"/><rect x="1135" y="128" width="125" height="68" rx="12"/>
+  </g>
+  <text x="82" y="169" class="head">Gerente</text>
+  <text x="278" y="157" class="head">Frontend / API</text><text x="300" y="179" class="msg">FastAPI</text>
+  <text x="506" y="157" class="head">Percepción</text><text x="512" y="179" class="msg">percibir()</text>
+  <text x="738" y="157" class="head">Simulador</text><text x="716" y="179" class="msg">TA cae · Google sigue</text>
+  <text x="954" y="157" class="head">Memoria / acciones</text><text x="970" y="179" class="msg">SQLite · reportes</text>
+  <text x="1151" y="169" class="head">Notificador</text>
+  <path d="M122 198 V746 M337 198 V746 M567 198 V746 M792 198 V746 M1010 198 V746 M1198 198 V746" class="life"/>
+
+  <path d="M122 245 H329" class="edge"/><text x="154" y="235" class="msg">ejecuta escenario E10</text>
+  <path d="M337 292 H559" class="edge"/><text x="371" y="282" class="msg">inicia el agente</text>
+  <path d="M567 339 H784" class="edge"/><text x="602" y="329" class="msg">consulta fuentes</text>
+  <path d="M792 386 H559" class="edge back"/><text x="607" y="376" class="msg">TripAdvisor no disponible</text>
+  <rect x="475" y="410" width="620" height="55" rx="10" class="warn"/>
+  <text x="500" y="444" class="msg">Registra la caída; conserva el ciclo y espera el siguiente intento de 6 h.</text>
+  <path d="M567 495 H784" class="edge"/><text x="614" y="485" class="msg">reintento</text>
+  <path d="M792 542 H559" class="edge back"/><text x="606" y="532" class="msg">sigue sin responder</text>
+  <path d="M567 589 H1002" class="edge"/><text x="662" y="579" class="msg">cierra al alcanzar el plazo con datos parciales</text>
+  <path d="M1010 636 H1189" class="edge"/><text x="1036" y="626" class="msg">alerta si evidencia parcial</text>
+  <path d="M1198 683 H122" class="edge back"/><text x="490" y="673" class="msg">reporte: datos incompletos; resultados al frontend</text>
+  <rect x="245" y="720" width="850" height="54" rx="10" fill="#fff4dd" stroke="#b48b3a"/>
+  <text x="270" y="753" class="msg">En E11 (todas las fuentes caídas), las alertas pueden llegar fuera de 24 h y M2 las cuenta tarde; no es una falla del servidor.</text>
+</svg>

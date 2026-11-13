@@ -1,0 +1,21 @@
+{
+  "algorithm": "SHA-256",
+  "comparison": "initial inspection vs after run",
+  "unchanged": true,
+  "files": {
+    "datos/modelo.joblib": "1466895d3f76d4f917e7e925cc3c718c3a03009a562f9fbb152044528a8184b5",
+    "datos/evaluacion_manual.csv": "d29221836fcd883f51c277cd77e8f11c6d1d86b6090d994bf1345c771e651f9f",
+    "datos/evaluacion_manual_holdout.csv": "931227bc81882d3a7e72d12b67c5a14836559572a365f3eff0837224c98030cb",
+    "salidas/pruebas/resumen.json": "4cd9ec8c63069b94deff51319ac20673921ef1a23d2865da10713c00e86df7f1",
+    "salidas/pruebas/tabla_resultados.md": "a010fb8b480c3f9f1d0c21019f097a950d425b12ae4f4b55ac3fcfdaceb1a774",
+    "salidas/pruebas/m1_clasificacion.csv": "639340c1a3e86dd1af1d52883fd2e19e94f02ce2e08ddeb33745de768975a148",
+    "salidas/pruebas/escenarios.csv": "661832b41fc6dd28794c0b75718e09b64db5e51fc247a2da9a1c24e0db130294",
+    "salidas/pruebas/techo_deteccion.json": "042d9fa799afc44b428bf970537174206ee61e3f7ada373359a008194e1672b4",
+    "salidas/calibracion/calibracion.csv": "17e9b18ed72583783c1f8699d0401f8bce9fb6e4490ce27260cb5bb3b52cdf08",
+    "salidas/calibracion/elegido.json": "de1c283e305a21043f537ee2a81ad05478b2cd43565381bf91fb08ec42e855b2",
+    "salidas/calibracion/estadisticas.json": "3171335f469024da7364445ba7de5e5b71379199a05fcbae44ae2c2456717b05",
+    "docs/ReviewPulse-Agent_Documento_Ajustado.pdf": "eea3b697ebabecc166e115fa4b80dc9242043fbb3ed8287f3cbfc41de997e88a",
+    "docs/ReviewPulse-Agent_Documento_Ajustado.docx": "0c33689c93d454fd3555f7ac5da600e249d33ae6afce249c2d21c5214fc287f9",
+    "docs/bitacora_uso_ia.docx": "8d2040af2f2303dec75fe49358953ee5447c7ef36c987f544c8d76d32f319bd6"
+  }
+}

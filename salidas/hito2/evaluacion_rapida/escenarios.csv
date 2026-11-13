@@ -1,0 +1,13 @@
+escenario,nombre,tipo,semilla,segundos,incidentes_relevantes,detectados_24h,detectados_tarde,latencia_media_h,alertas_total,alertas_vp,alertas_fp,fp_detalle,semanas_cerradas,reportes_a_tiempo,latencia_reporte_max_h,reportes_incompletos,resenas_clasificadas,resenas_descartadas,exactitud_polaridad_flujo,exactitud_tema_flujo,revision_manual,log
+E01,E01 Operación estable,normal,11,1.47,0,0,0,,0,0,0,,14,14,12.0,0,489,21,0.9325153374233128,0.9529652351738241,35,salidas/pruebas_rapido/rapido_gy5pfuq3/corridas/E01_s11/log_ejecucion.jsonl
+E02,E02 Incidente de limpieza,normal,11,1.41,1,1,0,12.0,1,1,0,,14,14,12.0,0,486,21,0.9279835390946503,0.9567901234567902,37,salidas/pruebas_rapido/rapido_gy5pfuq3/corridas/E02_s11/log_ejecucion.jsonl
+E03,E03 Dos incidentes,normal,11,1.38,2,1,0,12.0,1,1,0,,14,14,12.0,0,489,25,0.9447852760736196,0.950920245398773,31,salidas/pruebas_rapido/rapido_gy5pfuq3/corridas/E03_s11/log_ejecucion.jsonl
+E04,E04 Temporada alta,limite,11,1.96,0,0,0,,0,0,0,,14,14,12.0,0,704,32,0.9460227272727273,0.9431818181818182,50,salidas/pruebas_rapido/rapido_gy5pfuq3/corridas/E04_s11/log_ejecucion.jsonl
+E05,E05 Incidente moderado,limite,11,1.58,1,1,0,12.0,1,1,0,,14,14,12.0,0,492,17,0.9369918699186992,0.9573170731707317,38,salidas/pruebas_rapido/rapido_gy5pfuq3/corridas/E05_s11/log_ejecucion.jsonl
+E06,E06 Variación leve,limite,11,1.39,0,0,0,,0,0,0,,14,14,12.0,0,489,21,0.9325153374233128,0.9550102249488752,35,salidas/pruebas_rapido/rapido_gy5pfuq3/corridas/E06_s11/log_ejecucion.jsonl
+E07,E07 Volumen bajo,limite,11,0.53,1,0,0,,0,0,0,,14,14,12.0,0,147,9,0.9591836734693877,0.9183673469387755,16,salidas/pruebas_rapido/rapido_gy5pfuq3/corridas/E07_s11/log_ejecucion.jsonl
+E08,E08 Ironía alta,limite,11,1.43,1,1,0,12.0,1,1,0,,14,14,12.0,0,484,20,0.9462809917355371,0.9524793388429752,38,salidas/pruebas_rapido/rapido_gy5pfuq3/corridas/E08_s11/log_ejecucion.jsonl
+E09,E09 Entradas inválidas,falla,11,1.05,1,0,0,,0,0,0,,14,14,12.0,0,353,138,0.9235127478753541,0.9490084985835694,27,salidas/pruebas_rapido/rapido_gy5pfuq3/corridas/E09_s11/log_ejecucion.jsonl
+E10,E10 TripAdvisor caído,falla,11,1.27,1,1,0,24.0,1,1,0,,14,14,24.0,1,458,20,0.9323144104803494,0.9432314410480349,36,salidas/pruebas_rapido/rapido_gy5pfuq3/corridas/E10_s11/log_ejecucion.jsonl
+E11,E11 Todas las plataformas caídas,falla,11,1.35,1,0,1,,1,1,0,,14,14,24.0,2,487,20,0.9301848049281314,0.9589322381930184,36,salidas/pruebas_rapido/rapido_gy5pfuq3/corridas/E11_s11/log_ejecucion.jsonl
+E12,E12 Arranque en frío,falla,11,1.33,1,0,0,,0,0,0,,14,14,12.0,0,477,32,0.9350104821802935,0.9580712788259959,34,salidas/pruebas_rapido/rapido_gy5pfuq3/corridas/E12_s11/log_ejecucion.jsonl

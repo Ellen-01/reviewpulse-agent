@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="820" viewBox="0 0 1280 820" role="img" aria-labelledby="title desc">
+  <title id="title">Flujo típico de ReviewPulse-Agent en FastAPI</title>
+  <desc id="desc">El gerente ejecuta un escenario desde el frontend, FastAPI llama al agente y devuelve el resumen y las evidencias.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+      <path d="M0,0 L10,4 L0,8 Z" fill="#43536b"/>
+    </marker>
+    <style>
+      text { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif; fill: #263449; }
+      .title { font-size: 29px; font-weight: 700; }
+      .sub { font-size: 15px; fill: #5b687b; }
+      .head { font-size: 15px; font-weight: 700; }
+      .msg { font-size: 14px; }
+      .life { stroke: #8c99aa; stroke-width: 2; stroke-dasharray: 7 7; }
+      .edge { stroke: #43536b; stroke-width: 2; fill: none; marker-end: url(#arrow); }
+      .back { stroke-dasharray: 7 6; }
+    </style>
+  </defs>
+  <rect width="1280" height="820" fill="#f7f9fc"/>
+  <text x="54" y="58" class="title">Flujo típico · análisis y ejecución de escenario</text>
+  <text x="54" y="88" class="sub">Las respuestas incluyen métricas, eventos y reportes; la UI no mantiene una copia independiente del agente.</text>
+  <g fill="#eaf3ff" stroke="#4b72a8" stroke-width="2">
+    <rect x="42" y="128" width="145" height="68" rx="12"/><rect x="230" y="128" width="180" height="68" rx="12"/>
+    <rect x="455" y="128" width="160" height="68" rx="12"/><rect x="660" y="128" width="165" height="68" rx="12"/>
+    <rect x="870" y="128" width="175" height="68" rx="12"/><rect x="1090" y="128" width="155" height="68" rx="12"/>
+  </g>
+  <text x="78" y="169" class="head">Gerente</text>
+  <text x="249" y="157" class="head">Frontend web</text><text x="257" y="179" class="msg">web/static/</text>
+  <text x="490" y="157" class="head">FastAPI</text><text x="484" y="179" class="msg">api/main.py</text>
+  <text x="699" y="157" class="head">Agente</text><text x="690" y="179" class="msg">percepción · acción</text>
+  <text x="888" y="157" class="head">Entorno</text><text x="885" y="179" class="msg">simulador hotelero</text>
+  <text x="1107" y="157" class="head">Modelo / memoria</text><text x="1109" y="179" class="msg">LogReg · SQLite</text>
+  <path d="M114 198 V740 M320 198 V740 M535 198 V740 M743 198 V740 M957 198 V740 M1167 198 V740" class="life"/>
+
+  <path d="M114 245 H311" class="edge"/><text x="145" y="235" class="msg">elige E02 y semilla</text>
+  <path d="M320 292 H526" class="edge"/><text x="348" y="282" class="msg">POST /api/scenarios/run</text>
+  <path d="M535 339 H734" class="edge"/><text x="557" y="329" class="msg">crea ejecución aislada</text>
+  <path d="M743 386 H949" class="edge"/><text x="775" y="376" class="msg">consulta reseñas</text>
+  <path d="M957 433 H1158" class="edge back"/><text x="987" y="423" class="msg">lote y metadatos</text>
+  <path d="M743 480 H1158" class="edge"/><text x="804" y="470" class="msg">predicción de polaridad y tema</text>
+  <path d="M743 527 H1158" class="edge"/><text x="822" y="517" class="msg">guarda etiquetas y conteos</text>
+  <path d="M743 574 H1158" class="edge"/><text x="821" y="564" class="msg">historial SQLite y reportes</text>
+  <path d="M743 621 H949" class="edge"/><text x="776" y="611" class="msg">alerta o reporte semanal</text>
+  <path d="M535 668 H320" class="edge back"/><text x="355" y="658" class="msg">JSON: métricas, eventos, reportes</text>
+  <path d="M320 715 H114" class="edge back"/><text x="161" y="705" class="msg">panel actualizado</text>
+  <rect x="230" y="752" width="815" height="42" rx="10" fill="#e7f4eb" stroke="#6b9b76"/>
+  <text x="260" y="779" class="msg">La API libera SQLite y logs al terminar; la corrida de demostración no queda persistida.</text>
+</svg>

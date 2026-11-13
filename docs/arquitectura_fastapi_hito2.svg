@@ -1,0 +1,94 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="760" viewBox="0 0 1280 760" role="img" aria-labelledby="title desc">
+  <title id="title">Arquitectura actual de ReviewPulse-Agent</title>
+  <desc id="desc">Frontend independiente servido por FastAPI, conectado con el agente, el modelo, la memoria SQLite y el simulador.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+      <path d="M0,0 L10,4 L0,8 Z" fill="#43536b"/>
+    </marker>
+    <style>
+      text { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif; fill: #263449; }
+      .title { font-size: 30px; font-weight: 700; }
+      .subtitle { font-size: 15px; fill: #5b687b; }
+      .head { font-size: 19px; font-weight: 700; }
+      .body { font-size: 15px; }
+      .small { font-size: 13px; fill: #536176; }
+      .box { stroke-width: 2; rx: 15; }
+      .edge { stroke: #43536b; stroke-width: 2.4; fill: none; marker-end: url(#arrow); }
+      .dashed { stroke-dasharray: 8 7; }
+    </style>
+  </defs>
+  <rect width="1280" height="760" fill="#f7f9fc"/>
+  <text x="54" y="58" class="title">ReviewPulse-Agent · arquitectura FastAPI</text>
+  <text x="54" y="88" class="subtitle">Una API HTTP/JSON sirve la interfaz web y coordina el agente original sobre fuentes simuladas.</text>
+
+  <rect x="55" y="142" width="245" height="126" class="box" fill="#eaf3ff" stroke="#4b72a8"/>
+  <text x="78" y="178" class="head">Frontend independiente</text>
+  <text x="78" y="207" class="body">HTML · CSS · JavaScript</text>
+  <text x="78" y="235" class="small">web/static/</text>
+
+  <rect x="374" y="142" width="286" height="126" class="box" fill="#e5efff" stroke="#3b5b92"/>
+  <text x="398" y="178" class="head">Backend FastAPI</text>
+  <text x="398" y="207" class="body">api/main.py · HTTP / JSON</text>
+  <text x="398" y="235" class="small">Panel · reseñas · escenarios · evaluaciones</text>
+
+  <rect x="736" y="142" width="240" height="126" class="box" fill="#f1edff" stroke="#7463a8"/>
+  <text x="760" y="178" class="head">Modelo cargado</text>
+  <text x="760" y="207" class="body">TF-IDF + léxico + LogReg</text>
+  <text x="760" y="235" class="small">datos/modelo.joblib · sin LLM</text>
+
+  <rect x="1030" y="142" width="205" height="126" class="box" fill="#fff4dd" stroke="#b48b3a"/>
+  <text x="1052" y="178" class="head">Configuración</text>
+  <text x="1052" y="207" class="body">config/config.json</text>
+  <text x="1052" y="235" class="small">umbrales de alerta</text>
+
+  <path d="M300 205 H365" class="edge"/>
+  <text x="309" y="190" class="small">HTTP / JSON</text>
+  <path d="M660 205 H727" class="edge"/>
+  <text x="676" y="190" class="small">predicción</text>
+  <path d="M517 269 V340" class="edge"/>
+  <text x="529" y="316" class="small">solicita agente</text>
+  <path d="M1030 252 C930 300 800 300 650 252" class="edge dashed"/>
+  <text x="797" y="294" class="small">configuración</text>
+
+  <rect x="374" y="350" width="602" height="290" class="box" fill="#ffffff" stroke="#3b5b92"/>
+  <text x="400" y="389" class="head">Agente orientado a metas · reviewpulse/agente.py</text>
+
+  <rect x="407" y="435" width="150" height="106" class="box" fill="#eaf3ff" stroke="#4b72a8"/>
+  <text x="431" y="472" class="head">Percepción</text>
+  <text x="431" y="501" class="small">percibir()</text>
+
+  <rect x="600" y="435" width="150" height="106" class="box" fill="#eaf7ed" stroke="#5d916d"/>
+  <text x="622" y="472" class="head">Decisión</text>
+  <text x="622" y="501" class="small">STRIPS + BFS</text>
+
+  <rect x="793" y="435" width="150" height="106" class="box" fill="#fff0eb" stroke="#ae6b58"/>
+  <text x="824" y="472" class="head">Acción</text>
+  <text x="817" y="501" class="small">actuar()</text>
+
+  <path d="M557 488 H591" class="edge"/>
+  <path d="M750 488 H784" class="edge"/>
+  <path d="M870 435 C870 336 850 316 850 277" class="edge"/>
+  <text x="882" y="337" class="small">clasifica</text>
+
+  <rect x="55" y="386" width="245" height="190" class="box" fill="#f1f5f9" stroke="#78879a"/>
+  <text x="79" y="424" class="head">Entorno simulado</text>
+  <text x="79" y="456" class="body">TripAdvisor · Google</text>
+  <text x="79" y="485" class="small">reseñas, fechas y calificaciones</text>
+  <text x="79" y="514" class="small">incidentes y caídas configuradas</text>
+  <text x="79" y="543" class="small">reviewpulse/entorno.py</text>
+  <path d="M300 480 H397" class="edge"/>
+  <text x="314" y="463" class="small">reseñas</text>
+
+  <rect x="1030" y="368" width="205" height="132" class="box" fill="#fff6df" stroke="#b48b3a"/>
+  <text x="1052" y="408" class="head">Memoria</text>
+  <text x="1052" y="438" class="body">SQLite</text>
+  <text x="1052" y="466" class="small">reseñas · semanas · alertas</text>
+  <path d="M952 520 C1005 520 1005 460 1021 460" class="edge"/>
+
+  <rect x="1030" y="550" width="205" height="90" class="box" fill="#fff0eb" stroke="#ae6b58"/>
+  <text x="1052" y="586" class="head">Actuadores</text>
+  <text x="1052" y="614" class="small">alertas y reportes</text>
+  <path d="M943 520 C1005 555 1000 595 1021 595" class="edge"/>
+
+  <text x="55" y="690" class="small">Ejecuciones solicitadas por API: directorios temporales por solicitud. La memoria no persiste entre reinicios del Space.</text>
+</svg>
