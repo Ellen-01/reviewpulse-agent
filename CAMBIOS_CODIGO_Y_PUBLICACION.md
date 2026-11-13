@@ -1,5 +1,7 @@
 # Correcciones de código y publicación de ReviewPulse-Agent
 
+> **Aviso de vigencia:** este manifiesto conserva el historial de una entrega anterior. Sus instrucciones de publicación no aplican al estado actual. El proyecto vigente se trabaja en `migration/fastapi-hf-space`; no se debe publicar a `main`. Consulta `README.md` para la arquitectura y ejecución actuales.
+
 Base: ZIP `reviewpulse-agent-main.zip` aportado por el equipo. El proyecto se mantiene **independiente** del prototipo alternativo trabajado anteriormente.
 
 ## Archivos cambiados
@@ -22,24 +24,9 @@ Base: ZIP `reviewpulse-agent-main.zip` aportado por el equipo. El proyecto se ma
 - Los archivos históricos en `salidas/pruebas/` se conservan sin modificación.
 - Los PDF, el Word y la bitácora existentes permanecen **sin editar**: su versión académica definitiva debe reemplazarse en una siguiente etapa.
 
-## Cómo publicar de forma segura
+## Publicación (instrucciones históricas)
 
-El contenido de este ZIP es la **raíz** del repositorio `https://github.com/Ellen-01/reviewpulse-agent`.
-Subir **los archivos y carpetas de la raíz**, no la carpeta envolvente `reviewpulse-agent-main` como subcarpeta nueva. La alternativa recomendada es actualizar el repositorio existente con Git y subir solo los archivos modificados.
-No subir `.venv/`, `__pycache__/`, `.env`, secretos ni logs completos de `salidas/pruebas/corridas/` a menos que acuerden publicarlos; lo habitual es entregarlos aparte en un ZIP docente.
-
-En GitHub web: entrar al repositorio, usar `Add file → Upload files`, cargar los archivos modificados (incluidas las rutas en subcarpetas) y confirmar el commit. Es más fiable usar Git desde una copia ya clonada para conservar la jerarquía.
-
-Con Git, desde una **copia de trabajo de Ellen** y tras mantener una copia de seguridad: reemplazar los archivos modificados y ejecutar:
-
-```powershell
-git status --short
-git add reviewpulse/agente.py reviewpulse/memoria.py requirements.txt README.md .gitignore .github/workflows/comprobacion.yml tests/test_cierre_recursos.py CAMBIOS_CODIGO_Y_PUBLICACION.md
-git commit -m "Corregir cierre SQLite y fijar dependencias del modelo"
-git push origin main
-```
-
-Antes del `push`, comprobar `git remote -v`: el destino debe ser `https://github.com/Ellen-01/reviewpulse-agent.git`, **no** el repositorio de nuestro prototipo previo.
+Este bloque describía la publicación de un ZIP anterior. No contiene pasos vigentes para subir cambios. En particular, no se debe copiar ni ejecutar comandos de publicación a `main`; para la rama y el flujo actuales, consultar `README.md` y verificar el estado Git antes de cualquier operación.
 
 ## Verificación sugerida
 

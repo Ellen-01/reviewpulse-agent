@@ -7,7 +7,6 @@ salidas/pruebas_rapido/
 .venv/
 venv/
 .env
-.streamlit/secrets.toml
 __pycache__/
 *.pyc
 salidas/pruebas/corridas/

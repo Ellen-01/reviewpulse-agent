@@ -129,4 +129,14 @@ El agente conserva el ciclo percepción → decisión → acción, la memoria de
 
 El modelo guardado es `datos/modelo.joblib`; no se sustituye por otro. Las evaluaciones originales `datos/evaluacion_manual.csv` y `datos/evaluacion_manual_holdout.csv`, así como los resultados guardados, se conservan.
 
-La carpeta `docs/` contiene documentos y evidencias académicas históricas. No forma parte de la ruta de ejecución de FastAPI.
+La carpeta `docs/` contiene documentación y entregables académicos; los antecedentes históricos se identifican en la sección siguiente. No forma parte de la ruta de ejecución de FastAPI.
+
+## Migración y documentación vigente
+
+FastAPI es el backend actual y sirve el frontend independiente de `web/static/`. No hay implementación, dependencia ni configuración de ejecución de Streamlit. Las exclusiones `.streamlit/secrets.toml` que permanecen en `.gitignore` y `.dockerignore` son defensivas: evitan incluir secretos locales antiguos en Git o en la imagen Docker.
+
+Los diagramas vigentes de la arquitectura FastAPI y sus flujos son [arquitectura_fastapi_hito2.svg](docs/arquitectura_fastapi_hito2.svg), [secuencia_tipico_fastapi_hito2.svg](docs/secuencia_tipico_fastapi_hito2.svg) y [secuencia_excepcion_fastapi_hito2.svg](docs/secuencia_excepcion_fastapi_hito2.svg). Los PNG, el PDF/DOCX del documento anterior y la bitácora previa se conservan como evidencia histórica; pueden describir la interfaz anterior y no son instrucciones para ejecutar la aplicación actual.
+
+El PDF del Hito 2 se genera con `swift docs/generar_hito2.swift`; el generador no sobrescribe un destino existente. `docs/armar_documento.js` genera el DOCX histórico y no debe usarse para crear el Hito 2 porque apuntaba a ese archivo anterior. El manifiesto `CAMBIOS_CODIGO_Y_PUBLICACION.md` también es histórico. Sus antiguas instrucciones de publicación no aplican a la rama actual y no deben usarse para publicar a `main`.
+
+La fuente del informe y la bitácora están en `docs/hito2_informe.md` y `docs/hito2_bitacora_ia.md`. El PDF final es `ReviewPulse-Agent_hito2.pdf`; los resultados y la verificación reproducible se conservan en `salidas/hito2/`.
